@@ -1,3 +1,3 @@
 module.exports = {
-BookinService =require("./booking-service")
-}
+  BookingService: require("./booking-service"),
+};
