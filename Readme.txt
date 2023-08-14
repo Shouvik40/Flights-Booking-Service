@@ -134,18 +134,23 @@ If you're looking for more specific information about managing transactions, rec
 
 
 
-Methods Provided By MySQL for Isolation
+Methods Provided By MySQL to Provide ISOLATION
 1.READ UNCOMMITED --> 
             There is almost no isolation for us.
             It reads the latest UNCOMMITED value at every step that can be updated from other uncommited transacitons.
-            DIRTY READS - [Link to Readme2.md](./Readme2.md) is possible.
+            DIRTY READS - [Link toConcurrency_Control.md](./Concurrency_Control.md) is possible.
 
 2.READ COMMITED -->
             Here dirty reads is avoided as uncommited chages are not visible to any other transaciton until committed.
             In this level each select statement will have its own snapshot of data which can be problematic if we execute same select select again
             because some other transaction might commit and update and we might see new data in second select.
+            Thus brings NON-REPEATABLE READ  -->  [Link to Concurrency_Control.md](./Concurrency_Control.md)
 
-
+3. REPEATABLE READS -->
+            A snapshot of select is taken first time it runs during a transaciton and same snapshot is used throughout the transaciton when same select is 
+            executed.
+            A transaciton running at this level does not take into account the chages to data made by other transaciton.
+            But this brgins PHANTOM READ problem   -->  [Link to Concurrency_Control.md](./Concurrency_Control.md)
 
 
 
