@@ -88,9 +88,80 @@ I -Isolation - It is an ability of multiple transactions to execute without inte
 D -Durability -  If something changed in the database and any unforseen circimstances happened then our changes should persist.
 
 
+How databases ensure atomicity?
+preferred-->1. Logging - DBMS logs all actions that it is doing so that later it can undo it(can be maintained in memory(RAM) or disc)
+        2. Shadow Paging -  DBMS makes copies of actions(pages and transacitons) and then this copy is initially considered as a temp copy. If transaciton
+                    succeds then it starts pointing to the new temp copy.
+
+
+    Transaction -->     Begin 
+                        /   \
+                    Commit  Rollback 
+
+atomicity in MySQL --> After each commit and rollback database remains in a consistant state. 
+                In order to handle rollbacks    
+                        /   \
+                 Undo Log  Redo Log 
+
+Undo Log -> This log contains records about how to undo the last change done by a transaction.If any other transaciton need the original data as a 
+    partial consistant read operation the unmodified data is retrieved from undo logs.
+
+Redo Log -> By definition, the redo log is a disc based data structure used for crash recovery to correct data written by incomplete transacitons.
+    The changes which could make it upto the data files before the crash or any other reasons are replayed automatically during restart of server 
+    after crash. 
+
+
+1. Redo Log:
+   When a transaction makes changes to the database, these changes are first 
+   written to the transaction log (redo log) before being applied to the actual data pages. This log ensures that if a system crash occurs before 
+   the changes are written to the data pages, the changes can be replayed from the redo log during database recovery.
+
+   Redo logs are essential for maintaining data consistency and durability. They ensure that committed changes are not lost in the event of a 
+   crash or other failures. Redo logs help the database to "redo" the changes made by transactions during recovery, bringing the database back to 
+   a consistent state.
+
+2. Undo Log:
+   The undo logs are also a part of the database's transactional mechanism. When a transaction modifies data, the original values of the affected 
+   data are stored in the undo log. This allows for the possibility of rolling back or "undoing" the changes made by a transaction.
+
+   Undo logs are used for implementing features such as transaction rollback and MVCC (Multi-Version Concurrency Control). In case a transaction 
+   needs to be rolled back, the database can use the undo log to restore the data to its previous state.
+
+In practice, both redo and undo logs are managed by the database management system (DBMS) like MySQL. You don't directly interact with these logs; 
+rather, they are used internally to ensure data consistency and support transactional operations.
+
+If you're looking for more specific information about managing transactions, recovery mechanisms, or operational tasks in MySQL, feel free to ask!
+
+
+
+Methods Provided By MySQL for Isolation
+1.READ UNCOMMITED --> 
+            There is almost no isolation for us.
+            It reads the latest UNCOMMITED value at every step that can be updated from other uncommited transacitons.
+            DIRTY READS - [Link to Readme2.md](./Readme2.md) is possible.
+
+2.READ COMMITED -->
+            Here dirty reads is avoided as uncommited chages are not visible to any other transaciton until committed.
+            In this level each select statement will have its own snapshot of data which can be problematic if we execute same select select again
+            because some other transaction might commit and update and we might see new data in second select.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 interleaning and context switch
-
-
 
 Axioms
 1. Reflexivity

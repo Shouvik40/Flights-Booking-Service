@@ -50,3 +50,5 @@ npm run dev
 ```
 
 [Table connections diagram link for reference](https://miro.com/app/board/uXjVMxw9uvU=/)
+
+[Table connections Transitions of tables for reference](https://miro.com/app/board/uXjVMvjm420=/)
