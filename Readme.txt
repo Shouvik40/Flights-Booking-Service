@@ -152,6 +152,57 @@ Methods Provided By MySQL to Provide ISOLATION
             A transaciton running at this level does not take into account the chages to data made by other transaciton.
             But this brgins PHANTOM READ problem   -->  [Link to Concurrency_Control.md](./Concurrency_Control.md)
 
+4. SERIALIZABLE -->
+            It completely isolates the effect of one transaciton form other. It is a REPEATABLE READ with more isolation to avoid PHANTOM READS
+
+            "SERIALIZABLE" is the highest level of isolation. It ensures that transactions are 
+            executed in a way that appears as if they are executed one after another, without any overlapping or concurrent execution. This level of isolation 
+            prevents various types of anomalies, including dirty reads, non-repeatable reads, and phantom reads.
+
+            
+
+
+DURABILITY --> 
+            The DB should be durable enough to hold all the latest updates even if the system fails or restarts. If a transaction updates a chunk of data in DB  
+            and commites the DB will hold the new data. If transaciton commits but system fails before data could be written then data should be written back when 
+            system restarts.
+
+CONSISTANCY -->
+            Consistancy in InnoDB involves portecting data from crashes and maintain data integrity and consistency.
+                1.Double Write Buffer
+                2. Crash Recovery
+
+
+ 1.Double Write Buffer -
+    Page - Page is a unit which specifies how much data can be transferred from disc to memory. A page can contain one or more rows. If one row dosen't fit in the 
+            page InnoDB sets up additional pointers type data structures` so that whole info can go on a page
+    Flush - When we write something to the database it is not writen instantly for performance reasons in mysql. It instead stores that either in momory or in 
+            temporary disc storage. InnoDB storage structures that are periodically flushed include redo logs, undo logs and buffer pool. 
+            Flushing can happen because a memory area became full and system needs to free some space because if there is a commit involved then transaciton 
+            has to be finalised. 
+    Double write buffer -- it is a storage where InnoDB writes pages flushed from buffer pool before writing the pages to their positions in data files.If a system crashes in
+            middle of a page write InnoDB can find a good copy from double write buffer
+
+
+RACE Conditions -
+    Whwn two or more different entities try to access the same resourse.
+    Locking mechanism can help to avoid.
+
+Locking mechanism-
+    1. Shared Locks - this allows multiple transacitons to read data at same time but restrict any of them from writing.
+    2. Exclusive lock - This prevents transacitons from reading or writing the same data at same time.
+    3. Intent Locks - This is used to specify but a transaciton is planning to read or write a certain section of data.
+    4. Row-level locks - This allows transacitons to lock only a specific row.
+
+MySQL --> MVCC(Multi version Concurrency Control) - Compitable to allow multiple transacitons to read or write same data without much conflict.
+                Every transaciton in MySQL captures the data about to modoify at start of transaciton and writes the changes to an entirely different 
+                version of data.This allows to continue working with original data without conflict.
+
+                    Booking System 
+                        /    \
+                Pesimistic    Optimistic      
+                Concurrency   Concurrency
+                Control       Control 
 
 
 
@@ -159,12 +210,7 @@ Methods Provided By MySQL to Provide ISOLATION
 
 
 
-
-
-
-
-
-
+NORMALISATION -
 
 interleaning and context switch
 

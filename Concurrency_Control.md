@@ -148,3 +148,7 @@ To mitigate non-repeatable reads, database systems provide different isolation l
 - **SERIALIZABLE**: Provides the highest isolation level, preventing not only non-repeatable reads but also other anomalies like phantom reads.
 
 Choosing the appropriate isolation level depends on the requirements of your application and the trade-offs between data consistency and concurrency.
+
+## InnoDB
+
+Storage engine for MySQL
