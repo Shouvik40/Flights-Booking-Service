@@ -16,7 +16,7 @@ async function createBooking(req, res) {
   } catch (error) {
     console.log("Controller Catch");
     ErrorResponse.error = error;
-    return res.status(error.statusCode).json(ErrorResponse);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
 
