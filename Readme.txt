@@ -264,3 +264,9 @@ Q2. Design a db for ta quora like app
 -   You should be able to filter out a question based on a topic
 
 Sol -  https://miro.com/app/board/uXjVMvjm420=/
+
+
+
+
+Idempotency --> It is the property of maths and computer science where they can be applied in multiple times without
+                changing the result beyond first opportunities.

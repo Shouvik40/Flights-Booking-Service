@@ -83,6 +83,7 @@ async function createBooking(data) {
 }
 
 async function makePayment(data) {
+  console.log("Inside service");
   const transaction = await db.sequelize.transaction();
   try {
     const bookingDetails = await bookingRepository.get(
@@ -117,11 +118,11 @@ async function makePayment(data) {
       { status: BOOKED },
       transaction
     );
-    Queue.sendData({
-      recepientEmail: "cs191297@gmail.com",
-      subject: "Flight booked",
-      text: `Booking successfully done for the booking ${data.bookingId}`,
-    });
+    // Queue.sendData({
+    //   recepientEmail: "cs191297@gmail.com",
+    //   subject: "Flight booked",
+    //   text: `Booking successfully done for the booking ${data.bookingId}`,
+    // });
     await transaction.commit();
   } catch (error) {
     await transaction.rollback();
