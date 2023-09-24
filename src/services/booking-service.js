@@ -52,9 +52,7 @@ async function createBooking(data) {
   // remaining - userId,noOfSeats
   const transaction = await db.sequelize.transaction();
   try {
-    const flight = await axios.get(
-      `${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/${data.flightId}`
-    );
+    const flight = await axios.get(`${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/${data.flightId}`);
     const flightData = flight.data.data;
     if (data.noOfSeats > flightData.totalSeats) {
       throw new AppError("Not enough seats available", StatusCodes.BAD_REQUEST);
@@ -66,10 +64,7 @@ async function createBooking(data) {
       totalCost: totalBillingAmount,
     };
 
-    const booking = await bookingRepository.createBooking(
-      bookingPayload,
-      transaction
-    );
+    const booking = await bookingRepository.createBooking(bookingPayload, transaction);
 
     const apiUrl = `${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/${data.flightId}/seats`;
     await axios.patch(apiUrl, { seats: data.noOfSeats });
@@ -86,10 +81,7 @@ async function makePayment(data) {
   console.log("Inside service");
   const transaction = await db.sequelize.transaction();
   try {
-    const bookingDetails = await bookingRepository.get(
-      data.bookingId,
-      transaction
-    );
+    const bookingDetails = await bookingRepository.get(data.bookingId, transaction);
     if (bookingDetails.status == CANCELLED) {
       throw new AppError("The booking has expired", StatusCodes.BAD_REQUEST);
     }
@@ -101,28 +93,18 @@ async function makePayment(data) {
       throw new AppError("The booking has expired", StatusCodes.BAD_REQUEST);
     }
     if (bookingDetails.totalCost != data.totalCost) {
-      throw new AppError(
-        "The amount of the payment doesnt match",
-        StatusCodes.BAD_REQUEST
-      );
+      throw new AppError("The amount of the payment doesnt match", StatusCodes.BAD_REQUEST);
     }
     if (bookingDetails.userId != data.userId) {
-      throw new AppError(
-        "The user corresponding to the booking doesnt match",
-        StatusCodes.BAD_REQUEST
-      );
+      throw new AppError("The user corresponding to the booking doesnt match", StatusCodes.BAD_REQUEST);
     }
     // we assume here that payment is successful
-    await bookingRepository.update(
-      data.bookingId,
-      { status: BOOKED },
-      transaction
-    );
-    // Queue.sendData({
-    //   recepientEmail: "cs191297@gmail.com",
-    //   subject: "Flight booked",
-    //   text: `Booking successfully done for the booking ${data.bookingId}`,
-    // });
+    await bookingRepository.update(data.bookingId, { status: BOOKED }, transaction);
+    Queue.sendData({
+      recepientEmail: "cetel40762@armablog.com",
+      subject: "Flight booked",
+      text: `Booking successfully done for the booking ${data.bookingId}`,
+    });
     await transaction.commit();
   } catch (error) {
     await transaction.rollback();
@@ -138,18 +120,11 @@ async function cancelBooking(bookingId) {
       await transaction.commit();
       return true;
     }
-    await axios.patch(
-      `${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/${bookingDetails.flightId}/seats`,
-      {
-        seats: bookingDetails.noofSeats,
-        dec: 0,
-      }
-    );
-    await bookingRepository.update(
-      bookingId,
-      { status: CANCELLED },
-      transaction
-    );
+    await axios.patch(`${ServerConfig.FLIGHT_SERVICE}/api/v1/flights/${bookingDetails.flightId}/seats`, {
+      seats: bookingDetails.noofSeats,
+      dec: 0,
+    });
+    await bookingRepository.update(bookingId, { status: CANCELLED }, transaction);
     await transaction.commit();
   } catch (error) {
     await transaction.rollback();
